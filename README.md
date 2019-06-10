@@ -5,6 +5,7 @@ https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.h
 
 Example:
 ########### staging.tfvars
+
 tags = {
   "owner"   = "yourmeail@yourdomain.com"
   "service" = "my-app"
@@ -29,6 +30,7 @@ my_app_env_settings = [
   ]
 }
 ########### main tf
+
 variable "my_app_env_name" {
   description = "EB environment name"
 }
@@ -79,4 +81,4 @@ locals {
 }
 
 ###################
-Then, run terraform apply
+Then, run $ terraform apply  -var-file=staging.tfvars
