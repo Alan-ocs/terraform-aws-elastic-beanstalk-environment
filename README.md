@@ -4,20 +4,20 @@ Options for beanstalk environments are documented here:
 https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
 
 Example:
-########### staging.tfvars
 
+
+########### staging.tfvars
+```
 tags = {
   "owner"   = "yourmeail@yourdomain.com"
   "service" = "my-app"
 }
 
-service_name = "my-application"
-
-my_app_env_name = "version-A"
+my_app_env_name = "version-A1"
 
 my_app_timeout = "10m"
 
-my_app_application = "plupu-test-app"
+my_app_application = "plupu-test-app-2"
 
 my_app_solution_stack = "64bit Amazon Linux 2018.03 v2.9.3 running Ruby 2.6 (Puma)"
 
@@ -26,11 +26,17 @@ env_tags = {
 }
 
 my_app_env_settings = [
-  [ "aws:elasticbeanstalk:application:environment", "BUNDLE_WITHOUT", "test:development"]
-  ]
-}
+  [ "aws:autoscaling:asg", "MinSize", "1" ],
+  [ "aws:autoscaling:launchconfiguration", "InstanceType", "t2.micro" ],
+  [ "aws:autoscaling:asg", "MaxSize", "1" ],
+  [ "aws:elasticbeanstalk:application:environment", "ENVIRONMENT_PROPERTY1", "test:development"],
+  [ "aws:elasticbeanstalk:application:environment", "ENVIRONMENT_PROPERTY2", "transaction-broker"]
+]
+
+```
 ########### main tf
 
+```
 variable "my_app_env_name" {
   description = "EB environment name"
 }
@@ -67,7 +73,7 @@ provider "aws" {
   }
 
 module "my_app-environment" {
-  source          = "git::git@github.com/paul-lupu/tf-eb-environment.git"
+  source          = "github.com/paul-lupu/tf-eb-environment.git"
   env_name        = var.my_app_env_name
   app_name        = var.my_app_application
   solution_stack  = var.my_app_solution_stack
@@ -80,5 +86,6 @@ locals {
   tags = merge(var.tags, var.env_tags)
 }
 
-###################
+```
 Then, run $ terraform apply  -var-file=staging.tfvars
+
